@@ -1,4 +1,4 @@
 name: ConfigUtils
 version: '1.0-SNAPSHOT'
-main: com.github.longboyy.configutils.ConfigUtils
+main: com.github.longboyy.configutils.ConfigUtilsPlugin
 api-version: '1.21'
