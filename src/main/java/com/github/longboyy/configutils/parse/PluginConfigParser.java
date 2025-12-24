@@ -10,7 +10,8 @@ public abstract class PluginConfigParser extends ConfigParser {
     private boolean logReplies;
 
     public PluginConfigParser(Plugin plugin) {
-        super(plugin, plugin.getConfig());
+        super(plugin);
+        this.configFile = plugin.getConfig();
     }
 
     public final boolean isDebugEnabled() { return this.debug; }

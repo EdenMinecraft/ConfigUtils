@@ -5,16 +5,18 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.Plugin;
 
+import java.io.File;
 import java.util.logging.Logger;
 
 public abstract class ConfigParser {
     protected final Plugin plugin;
-    protected final FileConfiguration configFile;
     protected final Logger logger;
+    protected FileConfiguration configFile;
 
-    public ConfigParser(final Plugin plugin, FileConfiguration configFile) {
+    public ConfigParser(final Plugin plugin) {
         this.plugin = plugin;
-        this.configFile = configFile;
+
+        //this.configFile = configFile;
         this.logger = plugin.getLogger();
     }
 
@@ -26,6 +28,11 @@ public abstract class ConfigParser {
      */
     public boolean parse(){
         // Allow child class parsing
+        if(this.configFile == null) {
+            this.logger.warning("Config file is null, cannot parse");
+            return false;
+        }
+
         final boolean worked = parseInternal(this.configFile);
         if(worked){
             this.logger.info("Config parsed: " + this.configFile.getName());
