@@ -41,8 +41,8 @@ public final class ConfigUtils {
         int maxVal;
 
         try {
-            int a = Integer.parseInt(parts[0]);
-            int b = Integer.parseInt(parts[1]);
+            int a = Integer.parseInt(parts[0].trim());
+            int b = Integer.parseInt(parts[1].trim());
 
             minVal = Math.min(a, b);
             maxVal = Math.max(a, b);
@@ -68,8 +68,8 @@ public final class ConfigUtils {
         double maxVal;
 
         try {
-            double a = Double.parseDouble(parts[0]);
-            double b = Double.parseDouble(parts[1]);
+            double a = Double.parseDouble(parts[0].trim());
+            double b = Double.parseDouble(parts[1].trim());
 
             minVal = Math.min(a, b);
             maxVal = Math.max(a, b);
