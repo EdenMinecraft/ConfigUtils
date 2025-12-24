@@ -11,23 +11,26 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.MemoryConfiguration;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 public final class ConfigUtils {
 
-    public static boolean isRange(ConfigurationSection section, String key){
-        String raw = section.getString(key);
+    public static boolean isRange(ConfigurationSection parent, String key){
+        String raw = parent.getString(key);
         return raw != null && raw.split("-").length == 2;
     }
 
-    public static IntRange getIntRange(ConfigurationSection section, String key){
-        String raw = section.getString(key);
+    public static IntRange getIntRange(ConfigurationSection parent, String key){
+        String raw = parent.getString(key);
         if(raw == null){
             return null;
         }
@@ -53,8 +56,8 @@ public final class ConfigUtils {
         return new IntRange(minVal, maxVal);
     }
 
-    public static DoubleRange getDoubleRange(ConfigurationSection section, String key){
-        String raw = section.getString(key);
+    public static DoubleRange getDoubleRange(ConfigurationSection parent, String key){
+        String raw = parent.getString(key);
         if(raw == null){
             return null;
         }
@@ -80,8 +83,8 @@ public final class ConfigUtils {
         return new DoubleRange(minVal, maxVal);
     }
 
-    public static Material getMaterial(ConfigurationSection section, String key){
-        String materialName = section.getString(key);
+    public static Material getMaterial(ConfigurationSection parent, String key){
+        String materialName = parent.getString(key);
         if(materialName == null || materialName.isEmpty()){
             return null;
         }
@@ -93,8 +96,8 @@ public final class ConfigUtils {
         }
     }
 
-    public static ItemStack getItemStack(ConfigurationSection section, String key){
-        ConfigurationSection itemSection = section.getConfigurationSection(key);
+    public static ItemStack getItemStack(ConfigurationSection parent, String key){
+        ConfigurationSection itemSection = parent.getConfigurationSection(key);
         if(itemSection == null){
             return null;
         }
@@ -120,7 +123,7 @@ public final class ConfigUtils {
             itemMeta.lore(loreComponents);
         }
 
-        List<String> enchantList = section.getStringList("enchants");
+        List<String> enchantList = parent.getStringList("enchants");
         if(!enchantList.isEmpty()){
             var enchantRegistry = RegistryAccess.registryAccess().getRegistry(RegistryKey.ENCHANTMENT);
             for(String enchant : enchantList){
@@ -152,6 +155,21 @@ public final class ConfigUtils {
         item.setItemMeta(itemMeta);
 
         return item;
+    }
+
+    public static List<ConfigurationSection> getSectionList(ConfigurationSection parent, String identifier) {
+        List<ConfigurationSection> sections = new ArrayList<>();
+
+        List<Map<?, ?>> mapList = parent.getMapList(identifier);
+        for (Map<?, ?> map : mapList) {
+            MemoryConfiguration section = new MemoryConfiguration();
+            for (Map.Entry<?, ?> entry : map.entrySet()) {
+                section.set(entry.getKey().toString(), entry.getValue());
+            }
+            sections.add(section);
+        }
+
+        return sections;
     }
 
 }
