@@ -12,4 +12,9 @@ public record DoubleRange(double minVal, double maxVal) implements IRange<Double
     public Double getMax() {
         return this.maxVal;
     }
+
+    @Override
+    public Double getRandom() {
+        return random.nextDouble(this.minVal, this.maxVal);
+    }
 }

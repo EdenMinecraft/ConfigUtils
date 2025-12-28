@@ -2,11 +2,13 @@ package com.github.longboyy.configutils.utilities;
 
 import com.destroystokyo.paper.profile.PlayerProfile;
 import com.destroystokyo.paper.profile.ProfileProperty;
+import com.github.longboyy.configutils.models.ConfigItemStack;
 import com.github.longboyy.configutils.models.range.DoubleRange;
 import com.github.longboyy.configutils.models.range.IntRange;
 import io.papermc.paper.registry.RegistryAccess;
 import io.papermc.paper.registry.RegistryKey;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -96,7 +98,7 @@ public final class ConfigUtils {
         }
     }
 
-    public static ItemStack getItemStack(ConfigurationSection parent, String key){
+    public static ConfigItemStack getItemStack(ConfigurationSection parent, String key){
         ConfigurationSection itemSection = parent.getConfigurationSection(key);
         if(itemSection == null){
             return null;
@@ -107,19 +109,27 @@ public final class ConfigUtils {
             return null;
         }
 
-        int amount = itemSection.getInt("amount", 1);
+        //int amount = itemSection.getInt("amount", 1);
+        int amount;
+        IntRange amountRange = null;
+        if(itemSection.isInt("amount")){
+            amount = itemSection.getInt("amount");
+        }else {
+            amount = 1;
+            amountRange = getIntRange(itemSection, "amount");
+        }
 
         ItemStack item = new ItemStack(material, amount);
         ItemMeta itemMeta = item.getItemMeta();
 
         String displayName = itemSection.getString("displayName");
         if(displayName != null && !displayName.isEmpty()){
-            itemMeta.displayName(Component.text(displayName));
+            itemMeta.displayName(MiniMessage.miniMessage().deserialize(displayName));
         }
 
         List<String> loreLines = itemSection.getStringList("lore");
         if(!loreLines.isEmpty()){
-            var loreComponents = loreLines.stream().map(Component::text).toList();
+            var loreComponents = loreLines.stream().map(MiniMessage.miniMessage()::deserialize).toList();
             itemMeta.lore(loreComponents);
         }
 
@@ -154,7 +164,11 @@ public final class ConfigUtils {
 
         item.setItemMeta(itemMeta);
 
-        return item;
+        if(amountRange != null){
+            return new ConfigItemStack(item, amountRange);
+        }
+
+        return new ConfigItemStack(item, amount);
     }
 
     public static List<ConfigurationSection> getSectionList(ConfigurationSection parent, String identifier) {
