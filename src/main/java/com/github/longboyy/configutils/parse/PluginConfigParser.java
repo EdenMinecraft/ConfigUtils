@@ -11,7 +11,6 @@ public abstract class PluginConfigParser extends ConfigParser {
 
     public PluginConfigParser(Plugin plugin) {
         super(plugin);
-        this.configFile = plugin.getConfig();
     }
 
     public final boolean isDebugEnabled() { return this.debug; }
@@ -20,6 +19,10 @@ public abstract class PluginConfigParser extends ConfigParser {
     @Override
     public boolean parse() {
         this.plugin.saveDefaultConfig();
+
+        if(this.configFile == null){
+            this.configFile = plugin.getConfig();
+        }
 
         // Parse debug value
         this.debug = this.configFile.getBoolean("debug", false);
