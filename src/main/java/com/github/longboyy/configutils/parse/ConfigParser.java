@@ -1,11 +1,9 @@
 package com.github.longboyy.configutils.parse;
 
-import org.bukkit.ChatColor;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.Plugin;
 
-import java.io.File;
 import java.util.logging.Logger;
 
 public abstract class ConfigParser {
@@ -49,4 +47,6 @@ public abstract class ConfigParser {
      * @return Return true if the
      */
     protected abstract boolean parseInternal(final ConfigurationSection config);
+
+    public abstract void reset();
 }

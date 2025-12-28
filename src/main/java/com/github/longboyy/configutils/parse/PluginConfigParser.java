@@ -1,7 +1,5 @@
 package com.github.longboyy.configutils.parse;
 
-import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
 
@@ -14,12 +12,7 @@ public abstract class PluginConfigParser extends ConfigParser {
 
     public PluginConfigParser(Plugin plugin) {
         super(plugin);
-        File pluginConfigFile = new File(plugin.getDataFolder(), "config.yml");
-        if (!pluginConfigFile.exists()) {
-            pluginConfigFile.getParentFile().mkdirs();
-            plugin.saveResource(pluginConfigFile.getName(), false);
-        }
-        this.configFile = YamlConfiguration.loadConfiguration(pluginConfigFile);
+        this.reset();
     }
 
     public final boolean isDebugEnabled() { return this.debug; }
@@ -38,12 +31,13 @@ public abstract class PluginConfigParser extends ConfigParser {
         return super.parse();
     }
 
-    /**
-     * This should reset all config values back to their defaults. Child classes should override this if they parse
-     * additional values that should be reset.
-     */
+    @Override
     public void reset() {
-        this.debug = false;
-        this.logReplies = false;
+        File pluginConfigFile = new File(plugin.getDataFolder(), "config.yml");
+        if (!pluginConfigFile.exists()) {
+            pluginConfigFile.getParentFile().mkdirs();
+            plugin.saveResource(pluginConfigFile.getName(), false);
+        }
+        this.configFile = YamlConfiguration.loadConfiguration(pluginConfigFile);
     }
 }
