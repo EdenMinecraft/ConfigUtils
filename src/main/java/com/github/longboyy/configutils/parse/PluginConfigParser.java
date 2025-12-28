@@ -2,7 +2,10 @@ package com.github.longboyy.configutils.parse;
 
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
+
+import java.io.File;
 
 public abstract class PluginConfigParser extends ConfigParser {
 
@@ -11,6 +14,12 @@ public abstract class PluginConfigParser extends ConfigParser {
 
     public PluginConfigParser(Plugin plugin) {
         super(plugin);
+        File pluginConfigFile = new File(plugin.getDataFolder(), "config.yml");
+        if (!pluginConfigFile.exists()) {
+            pluginConfigFile.getParentFile().mkdirs();
+            plugin.saveResource(pluginConfigFile.getName(), false);
+        }
+        this.configFile = YamlConfiguration.loadConfiguration(pluginConfigFile);
     }
 
     public final boolean isDebugEnabled() { return this.debug; }
@@ -18,12 +27,6 @@ public abstract class PluginConfigParser extends ConfigParser {
 
     @Override
     public boolean parse() {
-        this.plugin.saveDefaultConfig();
-
-        if(this.configFile == null){
-            this.configFile = plugin.getConfig();
-        }
-
         // Parse debug value
         this.debug = this.configFile.getBoolean("debug", false);
         this.logger.info("Debug mode: " + (this.debug ? "enabled" : "disabled"));
